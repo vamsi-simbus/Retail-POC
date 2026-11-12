@@ -2,7 +2,7 @@
 
 An interactive Power BI dashboard for analyzing retail sales performance across **brands, stores, regions, product categories and time**. The data is prepared using a **Medallion Architecture** (Bronze → Silver → Gold), and the dashboard is built on the clean, business-ready Gold layer.
 
-🔗 **Live Dashboard:** [View in Power BI](https://app.powerbi.com/your-report-link) *(replace with your published link)*
+🔗 **Live Dashboard:** [View in Power BI](https://app.powerbi.com/reportEmbed?reportId=4a461ab1-8974-411f-9a3f-a65bc9f520da&autoAuth=true&ctid=45da25de-8003-4abf-bea8-55aba615e5e7)
 
 ---
 
