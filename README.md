@@ -1,6 +1,6 @@
 # 📊 Sales Analysis Performance Dashboard (Power BI)
 
-An interactive Power BI dashboard that analyzes retail sales performance across **brands, stores, regions, categories and time**. It helps business users quickly understand total sales, margin and units sold, compare brand and store performance, and spot seasonal trends.
+An interactive Power BI dashboard for analyzing retail sales performance across **brands, stores, regions, product categories and time**. The data is prepared using a **Medallion Architecture** (Bronze → Silver → Gold), and the dashboard is built on the clean, business-ready Gold layer.
 
 🔗 **Live Dashboard:** [View in Power BI](https://app.powerbi.com/your-report-link) *(replace with your published link)*
 
@@ -10,44 +10,70 @@ An interactive Power BI dashboard that analyzes retail sales performance across 
 
 1. [Overview](#overview)
 2. [Objectives](#objectives)
-3. [Dashboard Pages](#dashboard-pages)
+3. [Data Architecture – Medallion](#data-architecture--medallion)
+4. [Dashboard Pages](#dashboard-pages)
    - [Page 1: Brand Wise Sales](#page-1-brand-wise-sales)
    - [Page 2: Store Wise Sales](#page-2-store-wise-sales)
-4. [Filters and Navigation](#filters-and-navigation)
-5. [Key Metrics](#key-metrics)
-6. [Key Insights](#key-insights)
-7. [Data Fields Used](#data-fields-used)
-8. [Tools and Techniques](#tools-and-techniques)
-9. [How to Use the Dashboard](#how-to-use-the-dashboard)
-10. [Repository Structure](#repository-structure)
-11. [Future Enhancements](#future-enhancements)
+5. [Filters and Navigation](#filters-and-navigation)
+6. [How to Use the Dashboard](#how-to-use-the-dashboard)
+7. [Tools and Techniques](#tools-and-techniques)
+8. [Repository Structure](#repository-structure)
+9. [Future Enhancements](#future-enhancements)
 
 ---
 
 ## Overview
 
-The dashboard covers sales data for four fashion brands — **ONLY, JACK & JONES, SELECTED and VERO MODA** — across multiple stores and regions in India from **2017 to 2020**.
+The dashboard analyzes sales for four fashion brands — **ONLY, JACK & JONES, SELECTED and VERO MODA** — across stores and regions in India. It has two report pages connected through navigation buttons:
 
-| Metric | Value |
-|--------|-------|
-| Total Sales | ₹1,378.57M |
-| Total Net Margin | ₹865.62M |
-| Total Units Sold | 912.78K |
+- **Brand Wise Sales** – analysis by brand, category and sub-category.
+- **Store Wise Sales** – analysis by store, region and month.
 
-It has two report pages, connected with navigation buttons:
-
-- **Brand Wise Sales** – brand, category and sub-category performance.
-- **Store Wise Sales** – store, region and monthly unit performance.
+Users can filter by store, year, month, season, region and sub-category to explore the data from different angles.
 
 ---
 
 ## Objectives
 
 - Track overall sales, margin and units sold in one place.
-- Compare performance of brands year over year.
-- Identify top-selling and lowest-margin categories and sub-categories.
+- Compare brand performance year over year.
+- Identify top-selling and low-margin categories and sub-categories.
 - Find the best performing stores and regions.
-- Understand monthly and seasonal sales patterns to support planning and stock decisions.
+- Understand monthly and seasonal trends to support planning and stock decisions.
+
+---
+
+## Data Architecture – Medallion
+
+The data behind this dashboard is organized in three layers, where each layer improves data quality step by step before it reaches the report.
+
+```
+Source Data  ──►  🥉 Bronze  ──►  🥈 Silver  ──►  🥇 Gold  ──►  📊 Power BI Dashboard
+(raw files)       (raw)          (cleaned)       (business-ready)
+```
+
+### 🥉 Bronze Layer – Raw Data
+- Stores data exactly as it arrives from the source (sales transactions, store details, product details).
+- No changes are made, so the original data is always available for reprocessing or audit.
+- Ingestion metadata such as load time can be added for tracking.
+
+### 🥈 Silver Layer – Cleaned and Standardized Data
+- Removes duplicate records and handles missing or invalid values.
+- Standardizes data types, date formats and text values (for example, store and brand names).
+- Applies data quality checks so only valid records move forward.
+- Joins related data such as sales with store and product details.
+
+### 🥇 Gold Layer – Business-Ready Data
+- Contains aggregated, reporting-ready tables designed for analysis.
+- Organized around business needs such as sales by brand, store, region, category and month.
+- Includes key measures like total sales, net margin and units sold.
+- Power BI connects to this layer, so the dashboard always uses clean and trusted data.
+
+### Why Medallion Architecture?
+- **Data quality:** Each layer improves accuracy and consistency.
+- **Traceability:** Any number in the dashboard can be traced back to raw data.
+- **Reusability:** Silver and Gold tables can be reused by other reports and teams.
+- **Performance:** Power BI reads pre-aggregated Gold tables, so visuals load faster.
 
 ---
 
@@ -57,69 +83,16 @@ It has two report pages, connected with navigation buttons:
 
 ![Brand Wise Sales](images/brand_wise_sales.png)
 
-This page focuses on **brands, categories and sub-categories**.
+This page helps users understand performance by **brand, category and sub-category**.
 
-#### 1. KPI Cards
-Three cards at the top show overall totals for all brands:
-- **Total Sales:** ₹1,378.57M
-- **Total Margin:** ₹865.62M
-- **Total Units Sold:** 912.78K
-
-The cards update dynamically based on the selected filters.
-
-#### 2. Brand Logos
-Logos of **ONLY, JACK & JONES, SELECTED and VERO MODA** give a quick visual reference for the brands covered.
-
-#### 3. Lowest Margin Sub-Categories (Bar Chart)
-Shows the five sub-categories with the lowest total margin, with a color gradient (lighter = lower margin):
-
-| Sub-Category | Approx. Margin |
-|--------------|----------------|
-| Eyewear | ~2M |
-| Innerwear | ~5M |
-| Skirt | ~6M |
-| Jumpsuit | ~9M |
-| Footwear | ~12M |
-
-**Purpose:** Helps identify product areas where profitability is weak and pricing, discounting or assortment may need review.
-
-#### 4. Distribution of Total Sales (Decomposition Tree)
-Breaks down total sales (₹1,378.57M) step by step from **Category → Sub-Category**:
-
-| Category | Sales |
-|----------|-------|
-| Tops | ₹974.04M |
-| Bottoms | ₹334.70M |
-| Accessories | ₹61.68M |
-
-Drilling into **Tops** shows its top sub-categories:
-
-| Sub-Category | Sales |
-|--------------|-------|
-| Tops | ₹199.11M |
-| Shirts | ₹198.05M |
-| T-Shirts | ₹180.11M |
-
-**Purpose:** Lets users explore which categories and sub-categories contribute most to sales by expanding the tree interactively.
-
-#### 5. Brand-wise Total Sales (Clustered Column Chart)
-Compares yearly sales for each brand:
-
-| Year | Jack & Jones | Only | Selected | Vero Moda |
-|------|--------------|------|----------|-----------|
-| 2017 | ₹3.98M | – | – | ₹2.04M |
-| 2018 | ₹177.65M | ₹122.92M | ₹33.34M | ₹270.61M |
-| 2019 | ₹210.14M | ₹136.42M | ₹31.1M | ₹325.7M |
-| 2020 | ₹24.18M | – | – | ₹5.12M |
-
-*Values for 2017 and 2020 are small, which suggests partial-year data for those years.*
-
-**Purpose:** Shows how each brand grew year over year and which brand leads in sales.
-
-#### 6. Top 5 Sub-Categories – Sales Over Months (Line Chart)
-Tracks monthly sales (all years combined) for the top five sub-categories: **Dresses, Jeans, Shirts, Tops and T-Shirts**.
-
-**Purpose:** Highlights seasonal patterns, such as low sales in February and strong peaks around June–July and December.
+| Visual | What It Shows | How to Use It |
+|--------|---------------|---------------|
+| **KPI Cards** | Total sales, total margin and total units sold for all brands | Check overall performance; the values update automatically when filters are applied |
+| **Brand Logos** | The four brands covered in the analysis | Quick visual reference |
+| **Lowest Margin Sub-Categories** (bar chart) | Sub-categories with the lowest margin, using a color gradient | Identify products with weak profitability that may need pricing or assortment review |
+| **Distribution of Total Sales** (decomposition tree) | Breakdown of sales from category to sub-category | Click the **+** icons to drill down and see which categories drive sales |
+| **Brand-wise Total Sales** (clustered column chart) | Yearly sales for each brand side by side | Compare brands and track their growth over the years |
+| **Top 5 Sub-Categories – Sales Over Months** (line chart) | Monthly sales trend for the top five sub-categories | Spot seasonal peaks and slow months for each sub-category |
 
 ---
 
@@ -127,138 +100,71 @@ Tracks monthly sales (all years combined) for the top five sub-categories: **Dre
 
 ![Store Wise Sales](images/store_wise_sales.png)
 
-This page focuses on **stores, regions and monthly unit sales**.
+This page helps users understand performance by **store, region and month**.
 
-#### 1. KPI Cards
-- **Sum of Total Sales:** 1,378.57M
-- **Sum of Net Margin:** 865.62M
-- **Sum of Units Sold:** 912.78K
-
-#### 2. Sum of Net Margin by Region (Donut Chart)
-Shows each region's share of net margin:
-
-| Region | Share of Net Margin |
-|--------|--------------------|
-| West | 31.78% |
-| South | 29.95% |
-| North | 24.85% |
-| East | 13.43% |
-
-**Purpose:** Shows that West and South contribute most of the margin, while East has the most room to grow.
-
-#### 3. Top 5 Performing Stores by Rank Over Years (Line Chart)
-Tracks the yearly rank of the top five stores from 2017 to 2020 (rank 1 = best):
-- MB Bangalore Indiranagar
-- MB Hyderabad Jubilee Hills
-- MB Mumbai – Palladium Mall
-- VM Delhi – Pacific Mall
-- VM Kolkata – RPG Quest
-
-**Purpose:** Shows how store rankings changed over time. Several stores moved from low ranks in 2017 to top positions in 2018–2019, and MB Bangalore Indiranagar reached rank 1 by 2020.
-
-#### 4. Total Units Sold Over the Months (Area Chart)
-Units sold per month (all years combined):
-
-| Month | Units | Month | Units |
-|-------|-------|-------|-------|
-| Jan | 65K | Jul | 83K |
-| Feb | 33K | Aug | 46K |
-| Mar | 43K | Sep | 38K |
-| Apr | 49K | Oct | 41K |
-| May | 49K | Nov | 43K |
-| Jun | 81K | Dec | 77K |
-
-**Purpose:** Highlights peak months (June, July, December and January) and slow months (February and September), which is useful for stock and promotion planning.
-
-#### 5. Top 10 Store-wise Total Sales (Column Chart)
-Ranks the ten stores with the highest total sales, with a color gradient for sales value. **MB Mumbai – Palladium Mall** leads with **₹169.58M**, followed by MB Bangalore at **₹126.59M**. Other stores in the top 10 include MB Hyderabad, VM Delhi, VM Kolkata, MB Goa, ON Bangalore, ON Delhi, MB Gurgaon and MB – CG Road, ranging down to about **₹58.31M**.
-
-**Purpose:** Identifies the highest revenue stores for benchmarking and resource planning.
+| Visual | What It Shows | How to Use It |
+|--------|---------------|---------------|
+| **KPI Cards** | Total sales, net margin and units sold | Check overall performance for the selected filters |
+| **Sum of Net Margin by Region** (donut chart) | Share of net margin contributed by each region | Compare regions and click a segment to filter the page by that region |
+| **Top 5 Performing Stores by Rank Over Years** (line chart) | Yearly rank of the top five stores (rank 1 = best) | Track how store rankings improve or drop over time |
+| **Total Units Sold Over the Months** (area chart) | Units sold for each month across all years | Identify peak and slow months for stock and promotion planning |
+| **Top 10 Store-wise Total Sales** (column chart) | The ten stores with the highest sales, with a color gradient | Find top revenue stores for benchmarking |
 
 ---
 
 ## Filters and Navigation
 
 ### Slicers
-Both pages include slicers so users can filter all visuals at once:
 
-| Slicer | Page | Example Values |
-|--------|------|----------------|
-| Store Name | Both | MB – CG Road Ahmedabad, MB Bangalore Indiranagar, MB Goa – MG Road Panjim |
-| Year | Both | 2017, 2018, 2019, 2020 |
-| Month | Both | January to December |
-| Season | Both | AW18, AW19, … |
-| Sub-Category | Brand Wise Sales | Accessories, Dresses, Eyewear, Footwear, Innerwear, Jeans, Jumpsuit, … |
-| Region | Store Wise Sales | East, North, South, West |
+| Slicer | Available On | Purpose |
+|--------|--------------|---------|
+| Store Name | Both pages | View results for one or more specific stores |
+| Year | Both pages | Focus on a particular year |
+| Month | Both pages | Focus on specific months |
+| Season | Both pages | Filter by season (for example, AW18, AW19) |
+| Sub-Category | Brand Wise Sales | Filter by product sub-category |
+| Region | Store Wise Sales | Filter by East, North, South or West |
 
 ### Navigation Buttons
-- **Brand Wise Sales** – opens the brand analysis page.
-- **Store Wise Sales** – opens the store analysis page.
-- **Reset Filter** – clears all selected slicers and returns the page to its default view.
 
----
-
-## Key Metrics
-
-| Metric | Description |
-|--------|-------------|
-| Total Sales | Sum of sales value across all transactions |
-| Net Margin | Sum of margin earned (sales minus cost) |
-| Units Sold | Total quantity of items sold |
-| Store Rank | Yearly ranking of stores based on sales performance |
-| Margin Share by Region | Percentage of total net margin contributed by each region |
-
----
-
-## Key Insights
-
-1. **Vero Moda is the top brand**, with the highest sales in both 2018 (₹270.61M) and 2019 (₹325.7M).
-2. **All major brands grew from 2018 to 2019**, except Selected, which stayed roughly flat.
-3. **Tops is the biggest category**, contributing ₹974.04M, about 70% of total sales.
-4. **Eyewear, Innerwear and Skirts have the lowest margins**, so they may need pricing or assortment review.
-5. **West and South regions** together contribute over 60% of net margin; **East** contributes the least (13.43%).
-6. **MB Mumbai – Palladium Mall** is the highest-selling store at ₹169.58M.
-7. **Sales are seasonal:** units peak in June–July (81K–83K) and December–January (77K and 65K), and drop in February (33K) and September (38K).
-
----
-
-## Data Fields Used
-
-| Field | Description |
-|-------|-------------|
-| Brand | Brand name (ONLY, JACK & JONES, SELECTED, VERO MODA) |
-| Store_Name | Store name and location |
-| Region | East, North, South, West |
-| Category | Tops, Bottoms, Accessories |
-| Sub_Category | Product sub-category (Shirts, Jeans, Dresses, etc.) |
-| Season | Season code (AW18, AW19, …) |
-| Year / Month | Time of sale |
-| Total_Sales | Sales value |
-| Net_Margin / Total_Margin | Margin value |
-| Units_Sold | Quantity sold |
-
----
-
-## Tools and Techniques
-
-- **Power BI Desktop** – data modeling and report design
-- **Power BI Service** – publishing and sharing
-- **Power Query** – data cleaning and transformation
-- **DAX** – measures for totals, margin and store ranking
-- **Visuals used:** KPI cards, clustered column charts, bar chart, decomposition tree, line charts, donut chart, area chart and slicers
-- **Bookmarks and buttons** – page navigation and filter reset
-- **Conditional formatting** – color gradients to highlight high and low values
+| Button | Action |
+|--------|--------|
+| **Brand Wise Sales** | Opens the brand analysis page |
+| **Store Wise Sales** | Opens the store analysis page |
+| **Reset Filter** | Clears all slicer selections and returns to the default view |
 
 ---
 
 ## How to Use the Dashboard
 
-1. Open the dashboard using the live link above, or open the `.pbix` file in Power BI Desktop.
-2. Use the **Brand Wise Sales** and **Store Wise Sales** buttons to switch pages.
-3. Select values in the slicers (Store, Year, Month, Season, Sub-Category, Region) to filter the visuals.
-4. Click on any bar, line point or donut segment to cross-filter other visuals on the page.
-5. In the **Distribution of Total Sales** tree, click the **+** icons to drill down into categories and sub-categories.
-6. Click **Reset Filter** to clear all selections.
+1. **Open the dashboard** using the live link above, or open the `.pbix` file in Power BI Desktop.
+2. **Choose a page** using the **Brand Wise Sales** or **Store Wise Sales** buttons on the left.
+3. **Apply filters** by selecting values in the slicers. You can select multiple values by holding **Ctrl** while clicking.
+4. **Cross-filter visuals** by clicking any bar, line point or donut segment. All other visuals on the page update to show related data. Click the same item again to remove the selection.
+5. **Drill down** in the Distribution of Total Sales tree by clicking the **+** icons to move from category to sub-category.
+6. **View details** by hovering over any visual to see tooltips with exact values.
+7. **Focus on a visual** by clicking the **Focus mode** icon at the top-right of the visual to open it in full view.
+8. **Reset the view** by clicking **Reset Filter** to clear all selections.
+
+### Example Questions You Can Answer
+- Which brand performed best in a particular year?
+- Which sub-categories have the lowest margin?
+- Which region contributes the most margin?
+- Which stores consistently rank in the top five?
+- Which months have the highest and lowest sales?
+
+---
+
+## Tools and Techniques
+
+- **Medallion Architecture** – Bronze, Silver and Gold layers for data preparation
+- **Power BI Desktop** – data modeling and report design
+- **Power BI Service** – publishing and sharing
+- **Power Query** – data transformation
+- **DAX** – measures for sales, margin, units and store ranking
+- **Visuals:** KPI cards, column and bar charts, decomposition tree, line charts, donut chart, area chart and slicers
+- **Bookmarks and Buttons** – page navigation and filter reset
+- **Conditional Formatting** – color gradients to highlight high and low values
 
 ---
 
@@ -268,7 +174,6 @@ Both pages include slicers so users can filter all visuals at once:
 sales-analysis-dashboard/
 ├── README.md
 ├── Sales_Analysis_Dashboard.pbix     # Power BI report file
-├── data/                             # Source data (if shareable)
 └── images/
     ├── brand_wise_sales.png          # Screenshot of page 1
     └── store_wise_sales.png          # Screenshot of page 2
@@ -278,16 +183,9 @@ sales-analysis-dashboard/
 
 ## Future Enhancements
 
-- Add year-over-year growth % and profit margin % measures.
-- Add a Spring/Summer season comparison alongside Autumn/Winter.
+- Add year-over-year growth and margin percentage measures.
 - Add drill-through pages for individual store and brand details.
-- Add sales targets vs actuals tracking.
+- Add target vs actual sales tracking.
 - Schedule automatic data refresh in Power BI Service.
 
 ---
-
-## Author
-
-**Your Name**
-📧 your.email@example.com
-🔗 [LinkedIn](https://www.linkedin.com/in/your-profile)
